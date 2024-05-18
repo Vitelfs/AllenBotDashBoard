@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/main_screen.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="../img/allenbot_logo.png" type="image/x-icon">
+    <title>AllenBot</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div>
+                <h1>AllenBot</h1>
+            </div>
+            <div>
+                <input type="search" id="search" placeholder="Pesquisar..." autocomplete="off">
+            </div>
+            <nav class="nav">
+                <p id="user-logged">Logado em:<span id="user-name"></span> </p>
+                <i class="fas fa-wifi" id="conexao_ico"></i>
+            </nav>
+        </div>
+    </header>
+    <div id="sidebar">
+        <div id="logo">
+            <img src="../img/allenbotnoname_logo.png" alt="">
+        </div>
+        <ul class="menu">
+            <li id="active">
+                <a href="./main_screen.html">
+                    <i class="fas fa-users"></i>
+                    <span>Moradores</span>
+                </a>
+            </li>
+            <li>
+                <a href="./create_morador.html">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Cadastrar Moradores</span>
+                </a>
+            </li>
+            <li>
+                <a href="./configuracao.html">
+                    <i class="fas fa-gear"></i>
+                    <span>Configuração</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="btn_deslogar">
+                    <i class="fas fa-sign-out""></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <section class="user-container">
+        <div class="user-div-title">
+            <h1>Moradores Cadastrados</h1>
+        </div>
+        <div class="user-grid">
+            <div class="user-grid-item">Nome</div>
+            <div class="user-grid-item">Casa</div>
+            <div class="user-grid-item">CPF</div>
+            <div class="user-grid-item">Whatsapp</div>
+            <div class="user-grid-item">Tipo</div>
+            <div class="user-grid-item">Tem foto?</div>
+            <div class="user-grid-item">Editar/Remover</div>
+        </div>
+        <div class="container">
+            <ul class="user-list" id="moradorLista"></ul>
+            <div id="pagination"></div>
+        </div>
+    </section>
+    
+    <script type="module" src="../js/firebase_config.js"></script>
+    <script type="module" src="../js/user_logado.js"></script>
+    <script type="module" src="../js/deslogar.js"></script>
+
+</body>
+</html>

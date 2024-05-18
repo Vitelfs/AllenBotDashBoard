@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/configuracao.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="../img/allenbot_logo.png" type="image/x-icon">
+    <title>AllenBot</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div>
+                <h1>AllenBot</h1>
+            </div>
+            <nav class="nav">
+                <p id="user-logged">Logado em:<span id="user-name"></span> </p>
+            </nav>
+        </div>
+    </header>
+    <div id="sidebar">
+        <div id="logo">
+            <img src="../img/allenbotnoname_logo.png" alt="">
+        </div>
+        <ul class="menu">
+            <li>
+                <a href="./main_screen.html">
+                    <i class="fas fa-users"></i>
+                    <span>Moradores</span>
+                </a>
+            </li>
+            <li>
+                <a href="./create_morador.html">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Cadastrar Moradores</span>
+                </a>
+            </li>
+            <li id="active">
+                <a href="./configuracao.html">
+                    <i class="fas fa-gear"></i>
+                    <span>Configuração</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="btn_deslogar">
+                    <i class="fas fa-sign-out""></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <section id="content">
+        <div id="content-container">
+            <h1>Configurações do IDFace</h1>
+            <div class="container">
+                <div class="left-c">
+                    <img src="../img/idface.png" alt="id_face.png">
+                </div>
+                <div class="right-c">
+                    <h2>Configurações</h2>
+                    <form id="form">
+                        <div class="form-group">
+                            <label for="idface_ip">IP</label>
+                            <input type="text" id="idface_ip" readonly placeholder="192.168.0.129">
+                        </div>
+                        <div class="form-group">
+                            <label for="idface_gateway">Gateway</label>
+                            <input type="text" id="idface_gateway" readonly placeholder=" 192.168.0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="idface_netmask">Netmask</label>
+                            <input type="text" id="idface_netmask" readonly placeholder="255.255.128.0">
+                        </div>
+                        <div class="form-group">
+                            <label for="idfacea_porta">Porta</label>
+                            <input type="number" id="idfacea_porta" readonly placeholder="80">
+                        </div>
+                        <button type="button" id="btn_alterar" type="submit">Aplicar alterações</button>
+                    </form>
+                    <div class="opcoes">
+                        <div class="opcao">
+                            <p>Alterar Configurações</p>
+                            <button type="button" id="btn_confirm_alterar"><i class="fa-solid fa-pen-to-square" id="i_alterar"></i></button>
+                        </div>
+                        <div class="opcao">
+                            <p>Restaurar padrão de fábrica</p>
+                            <button type="button" id="btn_restaurar"><i class="fa-solid fa-rotate-left" id="i_reiniciar"></i></button>
+                        </div>
+                        <div class="opcao">
+                            <p>Testar conexão com servidor</p>
+                            <button type="button" id="btn_testar"><i class="fa-solid fa-wifi" id="i_conexao"></i></button>
+                            <p id="status"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script type="module" src="../js/deslogar.js"></script>
+    <script src="../js/mostrar_nome.js" type="module"></script>
+    <script src="../js/firebase_config.js" type="module"></script>
+    <script src="../js/idface/conexao_idface.js" type="module"></script>
+</body>
+</html>
