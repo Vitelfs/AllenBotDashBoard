@@ -259,13 +259,21 @@ input[type="search"]::-webkit-search-cancel-button {
     width: 30px;
 }
 
+.foto-morador{
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 5px;
+}
 .img-div{
     display: flex;
     align-items: center;
     justify-content: space-around;
 }
-.img-up-div{
+.img-div2{
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
+    border-right: 2px solid gray;
 }

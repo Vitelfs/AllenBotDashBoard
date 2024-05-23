@@ -69,7 +69,8 @@ async function mostrarMorador() {
             tipo: doc.data().tipo,
             whatsapp: formatarWhasapp(doc.data().whatsapp),
             condominio: doc.data().condominio,
-            foto: doc.data().foto
+            foto: doc.data().foto,
+            id: doc.data().id
         };
         console.log(morador);
         listaCompleta.push(morador); 
@@ -123,15 +124,7 @@ function exibirElementos(lista, pagina) {
         moradorTipo.setAttribute('class','item');
         moradorTipo.textContent = morador.tipo;
   
-        const moradorFoto = document.createElement('p');
-        moradorFoto.setAttribute('class','item');
-        moradorFoto.textContent = morador.foto;
-
-        if(moradorFoto.textContent == "Sim") {
-            moradorFoto.style.color = 'green';
-        } else {
-            moradorFoto.style.color = 'red';
-        }
+        
   
         const imgDiv = document.createElement('div');
         imgDiv.setAttribute('class','img-div');
@@ -143,20 +136,31 @@ function exibirElementos(lista, pagina) {
   
         const editImg = document.createElement('img');
         editImg.setAttribute('class','icon');
+        editImg.setAttribute('id','btn_editar');
         editImg.setAttribute('src','../img/editar.svg');
-        editImg.setAttribute('onclick', `editClient('${morador.cpf}')`);
-  
+        editImg.addEventListener('click', () => {
+            editClient(morador.cpf);
+        })
+        
         imgDiv.appendChild(editImg);
         imgDiv.appendChild(deleteImg);
+
+        const moradorFoto = document.createElement('img');
+        const imgDiv2 = document.createElement('div');
+        baixarFoto(morador.id).then(url => {
+            moradorFoto.setAttribute('src', url);
+            moradorFoto.setAttribute('class', 'foto-morador');
+            imgDiv2.setAttribute('class','img-div2');
+            imgDiv2.appendChild(moradorFoto);
+        });
 
         moradorItem.appendChild(moradorNome);
         moradorItem.appendChild(moradorCasa);
         moradorItem.appendChild(moradorCPF);
         moradorItem.appendChild(moradorWhasapp);
         moradorItem.appendChild(moradorTipo);
-        moradorItem.appendChild(moradorFoto);
+        moradorItem.appendChild(imgDiv2);
         moradorItem.appendChild(imgDiv);
-  
         moradorLista.appendChild(moradorItem);
     });
   }
@@ -208,6 +212,7 @@ async function getIp(){
     return sindicoIp;
 }
 
+
 async function conectarFaceID() {
     
     const statusIco = document.getElementById('conexao_ico');
@@ -221,11 +226,50 @@ async function conectarFaceID() {
         });
         console.log(conexao.data);
         statusIco.style.color = '#25d366';
+        return conexao.data.session;
     } catch(error) {
         console.log(error);
         statusIco.style.color = '#f15474';
     }
 }
+
+function editClient(cpf) {
+    var width = 800;
+    var height = 800;
+    var left = (window.innerWidth - width) / 2;
+    var top = (window.innerHeight - height) / 2;
+    var options = 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
+  
+    var url = './editar_morador.html?cpf=' + cpf;
+  
+    var popup = window.open(url, 'Edição de Usuário', options);
+    if (!popup || popup.closed || typeof popup.closed == 'undefined') {
+        alert('Por favor, desbloqueie os popups para continuar.');
+    }
+}
+
+async function baixarFoto(user_id) {
+
+    console.log("1" + user_id);
+    console.log("2" + session);
+    try {
+        const ip = await getIp();
+        const response = await fetch(`http://${ip}/user_get_image.fcgi?user_id=${user_id}&session=${session}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'image/jpeg'
+            }
+        });
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        return url;
+    } catch (error) {
+        console.error('Erro ao baixar a foto:', error);
+    }
+}
+
+const session = await conectarFaceID();
 showName();
 mostrarMorador();
-conectarFaceID();
+

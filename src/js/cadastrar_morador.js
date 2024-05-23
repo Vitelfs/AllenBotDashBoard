@@ -1,4 +1,4 @@
-import firebase from 'firebase/compat/app';
+
 import { } from './firebase_config.js';
 
 async function cpfJaCadastrado(cpf) {
@@ -7,7 +7,6 @@ async function cpfJaCadastrado(cpf) {
         const querySnapshot = await moradorDb.where('cpf', '==', cpf).get();
         return !querySnapshot.empty;
     } catch (error) {
-        console.error("Erro ao verificar CPF:", error);
         return false; 
     }
 }
@@ -17,10 +16,8 @@ function getEmail() {
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 const userEmail = user.email;
-                console.log("E-mail do usuário autenticado:", userEmail);
                 resolve(userEmail);
             } else {
-                console.log("Nenhum usuário autenticado.");
                 reject("Nenhum usuário autenticado.");
             }
         });
@@ -30,20 +27,15 @@ function getEmail() {
 async function getCondominio() {
     try {
         const userEmail = await getEmail();
-        console.log("E-mail obtido:", userEmail);
-
+    
         const userDb = firebase.firestore().collection('condominio');
         const sindico = await userDb.where('email', '==', userEmail).get();
         const sindicoData = sindico.docs[0].data();
         
-        console.log("Dados do sindico:", sindicoData);
-        
         const cod_condominio = sindicoData.cod_Condominio;
-        console.log("Código do condomínio:", cod_condominio);
 
         return cod_condominio;
     } catch (error) {
-        console.error("Erro ao obter condomínio:", error);
         return null;
     }
 }
@@ -64,7 +56,11 @@ async function cadastrarMorador() {
             foto: "Não"
         };
 
-        console.log("Morador:", morador);
+        if(morador.nome == "" || morador.cpf == "" || morador.whatsapp == "" || morador.casa == "" || morador.condominio == "" || morador.tipo == "" || document.getElementById('inputImagem').files.length == 0) {
+            alert('Preencha todos os campos');
+            document.getElementById('enviarBotao').style.display = 'block';
+            return;
+        }
 
         const moradorDb = firebase.firestore().collection('moradores');
 
@@ -94,17 +90,17 @@ async function cadastrarMorador() {
                 } else {
                     document.getElementById('numero-erro').style.display = 'none';
                     document.getElementById('cpf-erro').style.display = 'none';
-                    ultimoMorador =  await moradorDb.orderBy('timestamp', 'desc').limit(1).get();
                     await moradorDb.add(morador);
-                    createUser(ultimoMorador.id);
-                    alert("Morador Cadastrado com sucesso!");
-                    console.log("Morador cadastrado:", morador);
+                    const ultimoMorador =  await moradorDb.where('nome', '==', morador.nome).get();
+                    const moradorId = ultimoMorador.docs[0].id;
+                    createUser(moradorId);
+                    document.getElementById('enviarBotao').style.display = 'block';
                 }
             }
-            document
+           
         } catch (error) {
-            console.error("Erro ao cadastrar morador:", error);
             alert("Erro ao Cadastrar Morador");
+            document.getElementById('enviarBotao').style.display = 'block';
         }
 
 }
@@ -157,7 +153,6 @@ async function getIp(){
 //ID FACE
 
 const session = await conectarFaceID();
-console.log("Sessão:", session);
 
 async function conectarFaceID() {
     const ip = await getIp();
@@ -175,11 +170,9 @@ async function conectarFaceID() {
                 statusIco.style.color = '#25d366';
                 document.getElementById('section').style.display = 'flex';
                 document.getElementById('loading').style.display = 'none';
-                console.log('Logou com sucesso');
                 resolve(data.session); // Resolva a promessa com o valor de session
             },
             error: function(xhr, status, error) {
-                console.error('Erro ao conectar:', error);
                 statusIco.style.color = '#f15474';
                 document.getElementById('section').style.display = 'none';
                 reject(error); // Rejeite a promessa com o erro
@@ -190,9 +183,11 @@ async function conectarFaceID() {
 
 async function createUser(id_morador) {
 
+    console.log("Morador id:", id_morador);
     const ip = await getIp();
     const nome = document.getElementById('nome').value;
-    const morador = firebase.firestore().collection('moradores').doc(id_morador);
+    const morador = await firebase.firestore().collection('moradores').doc(id_morador);
+    console.log("Morador:", morador);
     $.ajax({
         url: "http://" + ip + "/create_objects.fcgi?session=" + session,
         type: 'POST',
@@ -204,9 +199,6 @@ async function createUser(id_morador) {
         success: function(data) {
           const id = data.ids[0];
           morador.update({id: id});
-          console.log("tipo de id: " + typeof id);
-          console.log('ID: ' + id);
-          console.log('Morador criado com sucesso');
           userToGroup(id,ip,id_morador);
         },
         error: function(xhr, status, error) {
@@ -216,8 +208,6 @@ async function createUser(id_morador) {
 
 async function userToGroup(id,ip,id_morador){
 
-    console.log("Id: " + id);
-    console.log(typeof id);
     $.ajax({
         url: "http://" + ip + "/create_objects.fcgi?session=" + session,
         type: 'POST',
@@ -254,13 +244,21 @@ function enviarImagem(id,ip,id_morador){
                 type: 'POST',
                 contentType: 'application/octet-stream',
                 processData: false, // Evitar que o jQuery converta os dados
-                data: bytesDaImagem.buffer // Use o buffer do array de bytes
+                data: bytesDaImagem.buffer,
+                success: function(data) {
+                    console.log('Imagem enviada com sucesso');
+                    morador.update({foto: 'Sim'});
+                },
+                error: function(xhr, status, error){
+                    console.log(error);
+                    alert('Erro ao enviar imagem');
+                    morador.update({foto: 'Não'});
+                    document.getElementById('imagem-erro').style.display = 'block';
+                } // Use o buffer do array de bytes
             });
-            console.log('Imagem enviada com sucesso');
-            morador.update({foto: "Sim"});
-            document.getElementById('enviarBotao').style.display = 'block';
         }
         reader.readAsArrayBuffer(file);
+        
     }
     else {
         alert('Por favor, selecione uma imagem.');
@@ -270,6 +268,7 @@ function enviarImagem(id,ip,id_morador){
 document.getElementById('enviarBotao').addEventListener('click', function(){
     cadastrarMorador();
 });
+
 
 
 
