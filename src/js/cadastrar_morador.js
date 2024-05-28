@@ -1,15 +1,27 @@
 
+
 import { } from './firebase_config.js';
 
 async function cpfJaCadastrado(cpf) {
     try {
+        console.log(cpf);
         const moradorDb = firebase.firestore().collection('moradores');
-        const querySnapshot = await moradorDb.where('cpf', '==', cpf).get();
-        return !querySnapshot.empty;
+        const morador = await moradorDb.where('cpf', '==', cpf).get();
+        const condominio = await getCondominio();
+
+        console.log(morador.docs[0].data().condominio);
+        console.log(condominio);
+
+
+        if(morador.docs[0].data().condominio == condominio){
+            return true;
+        }
+        return false;
     } catch (error) {
         return false; 
     }
 }
+
 
 function getEmail() {
     return new Promise((resolve, reject) => {
@@ -94,7 +106,8 @@ async function cadastrarMorador() {
                     const ultimoMorador =  await moradorDb.where('nome', '==', morador.nome).get();
                     const moradorId = ultimoMorador.docs[0].id;
                     createUser(moradorId);
-                    document.getElementById('enviarBotao').style.display = 'block';
+                    alert('Morador criado com sucesso!');
+                    
                 }
             }
            
@@ -186,6 +199,7 @@ async function createUser(id_morador) {
     console.log("Morador id:", id_morador);
     const ip = await getIp();
     const nome = document.getElementById('nome').value;
+    console.log("Nome:", nome);
     const morador = await firebase.firestore().collection('moradores').doc(id_morador);
     console.log("Morador:", morador);
     $.ajax({
@@ -246,6 +260,7 @@ function enviarImagem(id,ip,id_morador){
                 processData: false, // Evitar que o jQuery converta os dados
                 data: bytesDaImagem.buffer,
                 success: function(data) {
+                    console.log(data);
                     console.log('Imagem enviada com sucesso');
                     morador.update({foto: 'Sim'});
                 },
@@ -262,7 +277,14 @@ function enviarImagem(id,ip,id_morador){
     }
     else {
         alert('Por favor, selecione uma imagem.');
-    }         
+    }
+    document.getElementById('nome').value = '';
+    document.getElementById('cpf').value = '';
+    document.getElementById('casa').value = '';
+    document.getElementById('whatsapp').value = '';
+    document.getElementById('inputImagem').value = '';
+    document.getElementById('tipo').value = 'C';
+    document.getElementById('enviarBotao').style.display = 'block';         
 }
 
 document.getElementById('enviarBotao').addEventListener('click', function(){
