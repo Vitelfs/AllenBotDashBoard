@@ -143,7 +143,7 @@ nav p{
     align-items: center;
 }
 .section-container{
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     background-color: #fff;
@@ -163,6 +163,41 @@ nav p{
     color: white;
     font-weight: bold;
 }
+#btn_voltar{
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    width: 80%;
+    text-align: start;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: bolder;
+}
+.tipo_morador{
+    background-color: white;
+    border: 2px solid #32abfb;
+    border-radius: 5px;
+    gap: 15px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.tipo_morador button{
+    border: none;
+    outline: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: #32abfb;
+    font-weight: bolder;
+    cursor: pointer;
+}
+.tipo_morador button:hover{
+    text-decoration: underline;
+}
+
 #form-morador{ 
     width: 100%;
     height: 100%;
@@ -257,7 +292,7 @@ select{
     display: flex;
     align-items: center;
 }
-#form-morador button{
+#form-morador #enviarBotao{
     width: 80%;
     height: 40px;
     background: linear-gradient(to right, #003bfe, #32abfb);
@@ -270,7 +305,7 @@ select{
     transition: all 1.5s ease-in-out;
     margin-bottom: 20px;
 }
-#form-morador button:hover{
+#form-morador #enviarBotao:hover{
     background: linear-gradient(to right, #003bfe, #d932fb);
 }
 .erro{

@@ -1,17 +1,17 @@
 
-function getCpfUrl() {
+function getIdUrl() {
     
     const url = window.location.href;
     const urlParams = new URLSearchParams(url.split('?')[1]);
-    const cpf = urlParams.get('cpf').replace(/\D/g, '');;
-    return cpf;
+    const id = urlParams.get('id')
+    return id;
 }
 async function preencherDadosExistentes() {
     
-    const cpf = getCpfUrl();
-    console.log(cpf);
+    const id = getIdUrl();
+    console.log(id);
     const moradorDb = firebase.firestore().collection('moradores');
-    const morador = await moradorDb.where('cpf', '==', cpf).get();
+    const morador = await moradorDb.where('id', '==', id).get();
 
     document.getElementById('nome').value = morador.docs[0].data().nome;
     document.getElementById('cpf').value = morador.docs[0].data().cpf;
@@ -33,11 +33,12 @@ async function editarMorador() {
     const moradorDb = firebase.firestore().collection('moradores');
     const morador = await moradorDb.where('cpf', '==', id).get();
 
+
     if(confirm('Tem certeza que deseja alterar os dados do morador?')) {
         await moradorDb.doc(morador.docs[0].id).update({
             nome: nome,
             cpf: cpf,
-            whatsapp: whatsapp,
+            whatsapp: "55" + whatsapp,
             casa: casa,
             tipo: tipo,
         });

@@ -1,6 +1,128 @@
 
-
 import { } from './firebase_config.js';
+
+
+const button = document.getElementById('tipoSelecionado');
+const voltarButton = document.getElementById('btn_voltar');
+
+button.addEventListener('click', function(){
+    const select = document.getElementById('select_morador');
+    const selectedValue = select.options[select.selectedIndex].value;
+
+    if(selectedValue === 'Com chat') {
+        
+        document.getElementById('zap').style.display = 'block';
+        document.getElementById('cpf').style.display = 'block';
+        document.getElementById('tipo_morador').style.display = 'none';
+        document.getElementById('section-container').style.display = 'flex';
+        document.getElementById('enviarBotao').addEventListener('click', function(){
+            comChat();
+        });
+        
+        
+    }else if(selectedValue === 'Sem chat') {
+        document.getElementById('tipo_morador').style.display = 'none';
+        document.getElementById('section-container').style.display = 'flex';
+        document.getElementById('zap').style.display = 'none';
+        document.getElementById('cpf').style.display = 'none';
+        document.getElementById('section').style.height = '60vh';
+        document.getElementById('enviarBotao').addEventListener('click', function(){
+            semChat();
+        });
+    }
+});
+
+voltarButton.addEventListener('click', function(){
+    document.getElementById('section-container').style.display = 'none';
+    document.getElementById('section').style.height = '90vh';
+    document.getElementById('tipo_morador').style.display = 'flex';
+});
+
+async function semChat() {
+    
+    const cod_condominio = await getCondominio();
+
+    const morador = {
+        nome : document.getElementById("nome").value,
+        casa : document.getElementById("casa").value,
+        tipo : document.getElementById("select_morador").value,
+        condominio : cod_condominio,
+        status: "ativo",
+        id: "",
+        fotos: "Não"
+    };
+
+    if(morador.nome == "" || morador.casa == "" || document.getElementById('inputImagem').files.length == 0) {
+        alert('Preencha todos os campos');
+        document.getElementById('enviarBotao').style.display = 'block';
+        return;
+    }
+
+    cadastrarMorador(morador);
+}
+async function comChat() {
+    const cod_condominio = await getCondominio();
+
+    const morador = {
+        nome: document.getElementById("nome").value,
+        cpf: document.getElementById("cpf_morador").value,
+        whatsapp: document.getElementById("whatsapp").value,
+        casa: document.getElementById("casa").value,
+        tipo: document.getElementById("select_morador").value,
+        condominio: cod_condominio,
+        status: "ativo",
+        id: "",
+        foto: "Não"
+    };
+    console.log(morador);
+    if (morador.nome === "" || morador.cpf === "" || morador.whatsapp === "" || morador.casa === "" || morador.condominio === "" || morador.tipo === "" || document.getElementById('inputImagem').files.length === 0) {
+        alert('Preencha todos os campos');
+        document.getElementById('enviarBotao').style.display = 'block';
+        return;
+    }
+
+    let valid = true;
+
+    if (!validarCPF(morador.cpf)) {
+        document.getElementById('cpf-erro').style.display = 'block';
+        document.getElementById('cpf-erro').innerHTML = 'CPF inválido';
+        valid = false;
+    } else {
+        document.getElementById('cpf-erro').style.display = 'none';
+    }
+
+    if (!validarNumeroWhatsapp(morador.whatsapp)) {
+        document.getElementById('numero-erro').style.display = 'block';
+        document.getElementById('numero-erro').innerHTML = 'Número inválido';
+        valid = false;
+    } else {
+        document.getElementById('numero-erro').style.display = 'none';
+    }
+
+    if (!valid) {
+        document.getElementById('enviarBotao').style.display = 'block';
+        return;
+    }
+
+    try {
+        const cpfExistente = await cpfJaCadastrado(morador.cpf);
+        if (cpfExistente) {
+            document.getElementById('cpf-erro').style.display = 'block';
+            document.getElementById('cpf-erro').innerHTML = 'CPF já cadastrado';
+            document.getElementById('enviarBotao').style.display = 'block';
+            return;
+        } else {
+            document.getElementById('cpf-erro').style.display = 'none';
+        }
+
+        await cadastrarMorador(morador);
+        alert("Morador cadastrado com sucesso!");
+    } catch (error) {
+        alert("Erro ao Cadastrar Morador");
+        document.getElementById('enviarBotao').style.display = 'block';
+    }
+}
+
 
 async function cpfJaCadastrado(cpf) {
     try {
@@ -52,70 +174,18 @@ async function getCondominio() {
     }
 }
 
-async function cadastrarMorador() {
-    
-        const cod_condominio = await getCondominio();
-        console.log("Código do condomínio obtido:", cod_condominio);
-        document.getElementById('enviarBotao').style.display = 'none';
-        const morador = {
-            nome : document.getElementById("nome").value,
-            cpf : document.getElementById("cpf").value,
-            whatsapp : document.getElementById("whatsapp").value,
-            casa : document.getElementById("casa").value,
-            tipo : document.getElementById("tipo").value,
-            condominio : cod_condominio,
-            id: "",
-            foto: "Não"
-        };
 
-        if(morador.nome == "" || morador.cpf == "" || morador.whatsapp == "" || morador.casa == "" || morador.condominio == "" || morador.tipo == "" || document.getElementById('inputImagem').files.length == 0) {
-            alert('Preencha todos os campos');
-            document.getElementById('enviarBotao').style.display = 'block';
-            return;
-        }
+async function cadastrarMorador(morador) {
+    
+        document.getElementById('enviarBotao').style.display = 'none';
 
         const moradorDb = firebase.firestore().collection('moradores');
-
-        try {
-            if(!validarCPF(morador.cpf) && !validarNumeroWhatsapp(morador.whatsapp)){ 
-                document.getElementById('cpf-erro').style.display = 'block';
-                document.getElementById('cpf-erro').innerHTML = 'CPF inválido';
-                document.getElementById('numero-erro').style.display = 'block';
-                document.getElementById('numero-erro').innerHTML = 'Número inválido';
-                document.getElementById('enviarBotao').style.display = 'block';
-                if(!validarCPF(morador.cpf)){ 
-                    document.getElementById('cpf-erro').style.display = 'block';
-                    document.getElementById('cpf-erro').innerHTML = 'CPF inválido';
-                    document.getElementById('enviarBotao').style.display = 'block';
-                }else if(!validarNumeroWhatsapp(morador.whatsapp)){
-                    document.getElementById('numero-erro').style.display = 'block';
-                    document.getElementById('numero-erro').innerHTML = 'Número inválido';
-                    document.getElementById('enviarBotao').style.display = 'block';
-                }
-            }
-            else {
-                const cpfExistente = await cpfJaCadastrado(morador.cpf);
-                if (cpfExistente) {
-                    document.getElementById('cpf-erro').style.display = 'block';
-                    document.getElementById('cpf-erro').innerHTML = 'CPF já cadastrado';
-                    document.getElementById('enviarBotao').style.display = 'block';
-                } else {
-                    document.getElementById('numero-erro').style.display = 'none';
-                    document.getElementById('cpf-erro').style.display = 'none';
-                    await moradorDb.add(morador);
-                    const ultimoMorador =  await moradorDb.where('nome', '==', morador.nome).get();
-                    const moradorId = ultimoMorador.docs[0].id;
-                    createUser(moradorId);
-                    alert('Morador criado com sucesso!');
+        await moradorDb.add(morador);
+        const ultimoMorador =  await moradorDb.where('nome', '==', morador.nome).get();
+        const moradorId = ultimoMorador.docs[0].id;
+        createUser(moradorId);
+        alert('Morador criado com sucesso!');
                     
-                }
-            }
-           
-        } catch (error) {
-            alert("Erro ao Cadastrar Morador");
-            document.getElementById('enviarBotao').style.display = 'block';
-        }
-
 }
 
 function validarCPF(cpf) {
@@ -147,7 +217,7 @@ function validarCPF(cpf) {
 }
 function validarNumeroWhatsapp(numero) {
     
-    const regex = /^(55)(\d{2})(\d{8})$/;
+    const regex = /^(\d{2})(\d{9})$/;
 
     return regex.test(numero);
 }
@@ -283,13 +353,9 @@ function enviarImagem(id,ip,id_morador){
     document.getElementById('casa').value = '';
     document.getElementById('whatsapp').value = '';
     document.getElementById('inputImagem').value = '';
-    document.getElementById('tipo').value = 'C';
+    document.getElementById('tipo_morador').value = 'C';
     document.getElementById('enviarBotao').style.display = 'block';         
 }
-
-document.getElementById('enviarBotao').addEventListener('click', function(){
-    cadastrarMorador();
-});
 
 
 
