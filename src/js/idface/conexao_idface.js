@@ -147,7 +147,7 @@ async function salvarInformacoesEquipamento() {
         }
     }
 }
-exibirInformacoesEquipamento();
+//exibirInformacoesEquipamento();
 
 const testeConexao = document.querySelector('#btn_testar');
 testeConexao.addEventListener('click', () => {
@@ -163,5 +163,43 @@ editarInformacoes.addEventListener('click', editarInformacoesEquipamento);
 const salvarAlteracoes = document.querySelector('#btn_alterar');
 salvarAlteracoes.addEventListener('click', () => {
     salvarInformacoesEquipamento();
-})
+});
+
+const form = document.querySelector('#aparelhos-text');
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const quantidade_aparelhos = document.getElementById('aparelhos_qnt').value;
+    console.log(quantidade_aparelhos);
+    document.getElementById('aparelhos-text').style.display = 'none';
+    document.getElementById('aparelhos-cadastrar-ip').style.display = 'block';
+    cadastrarIps(quantidade_aparelhos);
+});
+
+const btn_voltar = document.querySelector('#btn_voltar');
+btn_voltar.addEventListener('click', () => {
+    document.getElementById('aparelhos-ip').innerHTML = '';
+    document.getElementById('aparelhos-text').style.display = 'block';
+    document.getElementById('aparelhos-cadastrar-ip').style.display = 'none';
+});
+
+function cadastrarIps(quantidade_aparelhos){
+
+
+    console.log(quantidade_aparelhos);
+    const ul = document.getElementById('aparelhos-ip');
+
+    for (let i = 0; i < quantidade_aparelhos; i++) {
+        const li = document.createElement('li');
+        const label = document.createElement('label');
+        label.textContent = `IP do leitor facial ${i + 1}:`;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'IP do leitor facial';
+        input.required = true;
+
+        li.appendChild(label);
+        li.appendChild(input);
+        ul.appendChild(li);
+    }
+}
 

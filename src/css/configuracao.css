@@ -12,8 +12,8 @@ body{
     flex-direction: column;
     align-items: center;
     height: 100vh;
-    overflow: hidden;
     width: 100vw;
+    overflow-x: hidden;
 }
 .header{
     position: absolute;
@@ -140,18 +140,103 @@ input[type="search"]::-webkit-search-cancel-button {
 
 #content{
     width: 85%;
-    height: 90vh;
+    height: fit-content;
     margin-top: 150px;
     margin-left: 120px;
-    margin-bottom: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+.aparelhos{
+    background-color: #32abfb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 50%;
+    height: fit-content;
+    margin-bottom: 30px;
+}
+.aparelhos-container{
+    width: 80%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+#aparelhos-text{
+    color: white;
+    font-weight: 500;
+    width: 100%;
+}
+.aparelhos-title{
+    margin-bottom: 20px;
+    text-align: center;
+    color: #f15474;
+    margin-top: 30px;
+}
+#aparelhos-text p{
+    margin-bottom: 20px;
+}
+#aparelhos-text input{
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+.aparelhos-btn{
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    padding: 5px;
+    margin-bottom: 20px;
+    background-color: #003bfe;
+    color: white;
+    cursor: pointer;
+}
+#aparelhos-cadastrar-ip{
+    display: none;
+    width: 90%;
+}
+#btn_voltar{
+    margin-top: 20px;
+    color: white;
+    width: 70%;
+    font-weight: bold;
+    cursor: pointer;
+}
+#aparelhos-cadastrar-ip p{
+    margin-bottom: 20px;
+    color: white;
+    font-weight: bold;
+}
+#aparelhos-cadastrar-ip input{
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+ul{
+    list-style: none;
+}
+li{
+    color: white;
+}
 #content-container{
     width: 100%;
     height: 100%;
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
